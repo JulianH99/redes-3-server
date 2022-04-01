@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+		<title>Hell Mailer |
+			{% block title %}{% endblock %}
+		</title>
+		{% block head %}{% endblock %}
+	</head>
+	<body>
+
+		<div class="container is-fluid">
+
+			<header class="mb-4">
+				<h1 class="is-size-1">Hell Mail</h1>
+			</header>
+			<hr>
+			<div class="columns">
+				<div class="column is-2">
+					{% include "includes/sidebar.html.twig" %}
+				</div>
+				<div class="column"> {% block content %}{% endblock %}
+					</div>
+				</div>
+			</div>
+
+			{% block footer %}{% endblock %}
+		</body>
+	</html>
