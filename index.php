@@ -17,7 +17,8 @@ session_start();
 $app = AppFactory::create();
 
 
-$twig = Twig::create('templates', ['cache' => FALSE]);
+$twig = Twig::create('templates', ['cache' => FALSE, 'debug' => TRUE]);
+$twig->addExtension(new \Twig\Extension\DebugExtension());
 
 // $mail = new PHPMailer(true);
 // $mail->isSMTP();
@@ -76,9 +77,18 @@ $app->get('/home', function (Request $request, Response $response) {
 
     $messages = open_mailbox($username, $password);
 
-    var_dump($messages);
+    return Twig::fromRequest($request)->render($response, 'home.html.twig', [
+        'messages' => $messages,
+        'user' => $username
+    ]);
+});
 
-    return Twig::fromRequest($request)->render($response, 'home.html.twig');
+$app->get('/logout', function (Request $request, Response $response) {
+    unset($_SESSION['username']);
+    unset($_SESSION['password']);
+
+    return $response->withHeader('Location', '/')
+        ->withStatus(302);
 });
 
 $app->post('/send-mail', function (Request $request, Response $response) {

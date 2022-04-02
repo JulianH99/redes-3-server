@@ -8,15 +8,36 @@
 {% block content %}
 	<div class="panel is-link">
 		<p class="panel-heading">
-			Inbox
+			Inbox -
+			<b>{{ user }}</b>
 		</p>
+		{% for message in messages %}
+			<div class="panel-block">
 
-		<div class="panel-block">
-			<div class="media">
-				<div class="media-content">
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam quas fugiat nulla aut suscipit nihil sit odit non optio error?
+				<div class="media is-flex-direction-column is-align-items-stretch" style="width: 100%">
+					<div class="media-content">
+						<div class="content is-flex">
+							<p class="content-header">
+								<div class="content-header__sender">
+									<b>{{ message.header.to.0.personal ?? 'Anon' }}</b>
+									<small>&lt;{{ message.header.sender.0.mailbox ?? 'windows' ~ '@' ~ message.header.sender.0.host ?? 'localhost' }}&gt;</small>
+								</div>
+							</p>
+							<p class="content-header__subject mx-auto">
+								<b>{{ message.header.subject }}</b>
+							</p>
+							<div class="content-header__details">
+								{{ message.header.date ?? 'No date registered' }}
+							</div>
+						</div>
+
+					</div>
+					<div class="media-hidden-content">
+						{{ message.message_body | raw }}
+					</div>
+
 				</div>
 			</div>
-		</div>
+		{% endfor %}
 	</div>
 {% endblock %}
