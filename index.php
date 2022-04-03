@@ -91,7 +91,45 @@ $app->get('/logout', function (Request $request, Response $response) {
         ->withStatus(302);
 });
 
+$app->get('/new-email', function (Request $request, Response $response){
+    $view = Twig::fromRequest($request);
+    return $view->render($response, 'write.html.twig');
+});
+
 $app->post('/send-mail', function (Request $request, Response $response) {
+    $body = $request->getParsedBody();
+
+    if (empty($body['from']) || empty($body['subject']) || empty($body['message'])) {
+        return Twig::fromRequest($request)
+            ->render(
+                $response,
+                'login.html.twig',
+                ['error' => 'All fields in form are required']
+            );
+    }
+    // Email Configuration
+    $mail = new PHPMailer(true);
+    $mail->isSMTP();
+    $mail->SMTPDebug = 4;
+    $mail->Host = '192.168.56.101';
+    $mail->SMTPAuth = TRUE;
+    $mail->Username = $_SESSION['username'];
+    $mail->Password = $_SESSION['password'];
+    $mail->SMTPSecure = FALSE;
+    $mail->SMTPAutoTLS = FALSE;
+    $mail->Port = 25;
+    $mail->setFrom($_SESSION['username'] . '@redestres.udistrital.edu.co', $_SESSION['username']);
+
+    $emails = explode(',', $body['from']);
+    foreach ($emails as $email){
+        $mail->addAddress($email, '');
+    }
+    $mail->isHTML(true);
+    $mail->Subject = $body['subject'];
+    $mail->Body    = $body['message'];
+    $mail->send();
+
+    return $response->withHeader('Location', '/home')->withStatus(302);
 });
 
 $app->run();
